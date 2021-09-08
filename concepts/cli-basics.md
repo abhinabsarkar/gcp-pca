@@ -132,13 +132,17 @@ gcloud compute networks list
 ## Create firewall rules
 ```bash
 # create the privatenet-allow-icmp-ssh-rdp firewall rule
-gcloud compute firewall-rules create privatenet-allow-icmp-ssh-rdp --direction=INGRESS --priority=1000 --network=privatenet --action=ALLOW --rules=icmp,tcp:22,tcp:3389 --source-ranges=0.0.0.0/0
+gcloud compute firewall-rules create privatenet-allow-icmp-ssh-rdp --direction=INGRESS \
+    --priority=1000 --network=privatenet --action=ALLOW --rules=icmp,tcp:22,tcp:3389 \
+    --source-ranges=0.0.0.0/0
 ```
 
 ## Create VM inside a subnet
 ```bash
 # Create a VM inside the subnet privatesubnet-us
-gcloud compute instances create privatenet-us-vm --zone=us-central1-c --machine-type=f1-micro --subnet=privatesubnet-us --image-family=debian-10 --image-project=debian-cloud --boot-disk-size=10GB --boot-disk-type=pd-standard --boot-disk-device-name=privatenet-us-vm
+gcloud compute instances create privatenet-us-vm --zone=us-central1-c --machine-type=f1-micro \
+    --subnet=privatesubnet-us --image-family=debian-10 --image-project=debian-cloud \
+    --boot-disk-size=10GB --boot-disk-type=pd-standard --boot-disk-device-name=privatenet-us-vm
 # List the VMs, sorted by zone
 gcloud compute instances list --sort-by=ZONE
 ```
