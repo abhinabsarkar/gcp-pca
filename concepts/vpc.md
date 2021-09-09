@@ -1,5 +1,6 @@
 # Virtual Private Cloud (VPC)
 * [Virtual Private Cloud (VPC) - Official documentation](https://cloud.google.com/vpc/docs)
+* [Virtual Networks - slides](slides/VirtualNetworks.pdf)
 
 Google Cloud Virtual Private Cloud (VPC) provides networking functionality to Compute Engine virtual machine (VM) instances, Google Kubernetes Engine (GKE) containers, and the App Engine flexible environment. VPC provides networking for your cloud-based services that is global, scalable, and flexible.
 
@@ -63,6 +64,9 @@ Cloud NAT configures the [Andromeda software](https://cloudplatform.googleblog.c
 * [Cloud NAT documentation](https://cloud.google.com/nat/docs/overview)
 
 ![Alt text](/images/cloud-nat.png)
+
+To route requests through a static IP address, you need to configure the  VPC egress to route all outbound traffic through a VPC network that has a Cloud NAT gateway configured with the static IP address. 
+ * [Static outbound IP address](https://cloud.google.com/run/docs/configuring/static-outbound-ip#task_overview)
 
 ## Private Google Access
 Private Google Access permits access to Cloud and Developer APIs and most Google Cloud services, except for the following services:
