@@ -205,3 +205,50 @@ ping -c 2 www.google.com
 ```
 To route requests through a static IP address, you need to configure the  VPC egress to route all outbound traffic through a VPC network that has a Cloud NAT gateway configured with the static IP address. 
  * [Static outbound IP address](https://cloud.google.com/run/docs/configuring/static-outbound-ip#task_overview)
+
+## Create VPN gateways & tunnels
+gcloud command line window shows the gcloud commands to create the VPN gateway and VPN tunnels and it illustrates that three forwarding rules are also created.
+```bash
+# Create a vpn-1 gateway
+gcloud compute target-vpn-gateways create vpn-1 \
+    --project=qwiklabs-gcp-04-1de42120fcbe \
+    --region=us-central1 --network=vpn-network-1
+
+# Create a forwarding rule to direct network traffic with ESP protocol.
+# ESP protocol is used by IPsec 
+# https://en.wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload
+# The IP Address is the static IP address of the VPN gateway
+gcloud compute forwarding-rules create vpn-1-rule-esp \
+    --project=qwiklabs-gcp-04-1de42120fcbe \
+    --region=us-central1 --address=34.68.22.200 \
+    --ip-protocol=ESP --target-vpn-gateway=vpn-1
+# Create a forwarding rule to direct network traffic with UDP protocol port 500
+# The IP Address is the static IP address of the VPN gateway
+gcloud compute forwarding-rules create vpn-1-rule-udp500 \
+    --project=qwiklabs-gcp-04-1de42120fcbe \
+    --region=us-central1 --address=34.68.22.200 \
+    --ip-protocol=UDP --ports=500 --target-vpn-gateway=vpn-1
+# Create a forwarding rule to direct network traffic with UDP protocol port 4500
+# The IP Address is the static IP address of the VPN gateway
+gcloud compute forwarding-rules create vpn-1-rule-udp4500 \
+    --project=qwiklabs-gcp-04-1de42120fcbe \
+    --region=us-central1 --address=34.68.22.200 \
+    --ip-protocol=UDP --ports=4500 --target-vpn-gateway=vpn-1
+# Create tunnel to the remote VPN gateway
+# Peer address is the static IP address of the remote VPN gateway
+gcloud compute vpn-tunnels create tunnel1to2 \
+    --project=qwiklabs-gcp-04-1de42120fcbe \
+    --region=us-central1 --peer-address=34.140.209.134 \
+    --shared-secret=gcprocks --ike-version=2 \
+    --local-traffic-selector=0.0.0.0/0 \
+    --remote-traffic-selector=0.0.0.0/0 \
+    --target-vpn-gateway=vpn-1
+# Create a route to the destination subnet
+# Destination range is the CIDR range of the target subnet 
+gcloud compute routes create tunnel1to2-route-1 \
+    --project=qwiklabs-gcp-04-1de42120fcbe \
+    --network=vpn-network-1 --priority=1000 \
+    --destination-range=10.1.3.0/24 \
+    --next-hop-vpn-tunnel=tunnel1to2 \
+    --next-hop-vpn-tunnel-region=us-central1
+```
